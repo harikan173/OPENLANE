@@ -78,6 +78,8 @@ There are two directories available
 - 1-openlane
 - 2-pdk 
 - pdk stands for (process design kit),and the pdk we are using is sky water 130nm pdk,and openlane is there on this pdk.
+
+   
 ![002](https://user-images.githubusercontent.com/84865915/123960735-47240c80-d9cd-11eb-869f-ae5068bb86b6.JPG)
 
 As we open the pdks directory it contains three directories inside it:
@@ -104,13 +106,30 @@ As we open the pdks directory it contains three directories inside it:
 
 ![006](https://user-images.githubusercontent.com/84865915/123960614-20fe6c80-d9cd-11eb-82e7-38e85b48a674.JPG)
 
+     
+ ## Open-Source EDA Tools
+ ### OpenLANE Initialization
+   For invoking OpenLANE in Linux Ubuntu, we should first run the docker everytime we use OpenLANE. This is done by using the following script:
+    
+    docker run -it -v $(pwd):/openLANE_flow -v $PDK_ROOT:$PDK_ROOT -e PDK_ROOT=$PDK_ROOT -u $(id -u $USER):$(id -g $USER) openlane:rc6
+   
+   A custom shell script or commands can be generated to make the task simpler.
+   
+   - To invoke OpenLANE run the `./flow.tcl` script.
+   - OpenLANE supports two modes of operation: interactive and autonomous.
+   - To use interactive mode use `-interactive` flag with `./flow.tcl`
+
 
 ![003](https://user-images.githubusercontent.com/84865915/123960713-3f646800-d9cd-11eb-9af9-ee8e42e9b6ee.JPG)
-
+### Design Preparation
+   The first step after invoking OpenLANE is to import the openlane package of required version. This is done using following command. Here 0.9 is the required version of OpenLANE.
+   
+    package require openlane 0.9
+       
 - firstly we must import all the packages that are needed for this we must use the command package require openlane 0.9
 - Next is the design set up stage 
    - commad used for set up is:prep -design design_name(eg:prep -design picorv32a)
-# 007
+
 ![007](https://user-images.githubusercontent.com/84865915/123960599-1cd24f00-d9cd-11eb-9383-c4d2ea779594.JPG)
 
 - merging the LEFs is happening(it is merging below both files
@@ -132,7 +151,10 @@ As we open the pdks directory it contains three directories inside it:
     - magic
     - lvs
  - config.tcl shows the which all default parameters which is been taken by the run.
-# run synthesis
+### Design Synthesis and Results
+   The first step in OpenLANE flow is RTL Synthesis of the design loaded. This is done using the following command.
+   
+    run_synthesis
 # flop ratio
 ![flop ratio](https://user-images.githubusercontent.com/84865915/123962077-b0584f80-d9ce-11eb-81a9-868dccdc9969.JPG)
 
