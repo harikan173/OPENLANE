@@ -172,4 +172,14 @@ As we open the pdks directory it contains three directories inside it:
 # sta report
 
 ![sta report](https://user-images.githubusercontent.com/84865915/123962173-c8c86a00-d9ce-11eb-9109-8e27fe37ba1f.JPG)
+![fp1](https://user-images.githubusercontent.com/84865915/124375288-24407380-dcbf-11eb-9b32-acdfb9c5a1e2.JPG)
+![fp2](https://user-images.githubusercontent.com/84865915/124375295-2aceeb00-dcbf-11eb-88dc-a39b81822d2b.JPG)
+![fp3](https://user-images.githubusercontent.com/84865915/124375308-315d6280-dcbf-11eb-8954-f16274627438.JPG)
+![fp4](https://user-images.githubusercontent.com/84865915/124375313-38847080-dcbf-11eb-82fa-fce5719e9cb7.JPG)
+![fp5](https://user-images.githubusercontent.com/84865915/124375322-3fab7e80-dcbf-11eb-83df-99327b842b2b.JPG)
+![fp6](https://user-images.githubusercontent.com/84865915/124375326-45a15f80-dcbf-11eb-9564-04c83d597fd6.JPG)
+![gitclone](https://user-images.githubusercontent.com/84865915/124375334-4b974080-dcbf-11eb-8b9f-df45f5effb0f.JPG)
+![inverter](https://user-images.githubusercontent.com/84865915/124375340-50f48b00-dcbf-11eb-83d8-1a36fe9db7c6.JPG)
+![p1](https://user-images.githubusercontent.com/84865915/124375358-623d9780-dcbf-11eb-9518-45a897031d72.JPG)
+
 
