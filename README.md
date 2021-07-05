@@ -1,5 +1,8 @@
 # OPENLANE
-# OpenSource Physical Design
+# Advanced-Physical Design-using-Sky130-Openlane
+
+![front](https://user-images.githubusercontent.com/84865915/124502201-a2e10200-dde0-11eb-9752-858c25354b88.JPG)
+
   This repository contains all the information studied and created during the [Advanced Physical Design Using OpenLANE / SKY130](https://www.vlsisystemdesign.com/advanced-physical-design-using-openlane-sky130/) workshop. It is primarily foucused on a complete RTL2GDS flow using the open-soucre flow named OpenLANE. [PICORV32A](https://github.com/cliffordwolf/picorv32) RISC-V core design is used for the purpose.
 
 # Table of Contents
@@ -250,7 +253,7 @@ The SPICE netlist generated in previous step is simulated using the NGSPICE tool
     - ngspice 1 -> plot Y vs time A
     
 Below figure shows the waveform of Inverter output vs input w.r.t. time. Many timing parameters like rise time delay, fall time delay, propagation delay are calculated using this waveform
- # day4 3
+
  
 # Day 4 - Pre-layout timing analysis and importance of good clock tree
 In order to use a design of standard cell layout in OpenLANE RTL2GDS flow, it is converted to a standard cell LEF. LEF stands for Library Exchange Format. The entire design has to be analyzed for any timing violations after addition or change in the design.
@@ -258,14 +261,66 @@ In order to use a design of standard cell layout in OpenLANE RTL2GDS flow, it is
 ## Magic Layout to Standard Cell LEF
 Before creating the LEF file we require some details about the layers in the designs. This details are available in a tracks.info as shown below. It gives information about the offset and pitch of a track in a given layer both in horizontal and vertical direction. The track information is given in below mentioned format.
 
-  - <layer-name> <X-or-Y> <track-offset> <track-pitch>
+![lef](https://user-images.githubusercontent.com/84865915/124416021-ad18e700-dd73-11eb-80e0-6d99a60954ae.JPG)
+
+Now the flow needs to be done again. We will invoke the docker and overwrite on the existing file.
+
+The following commands are used after invoking the docker:
+
+% ./flow.tcl -interactive
+% package require openlane 0.9
+% prep -design picorv32a -tag 03-07_15-55 -overwrite
+The switch -overwrite overwrites the existing file 03-07_12-55. Once synthesis is done and timing is under control, we will do the floorplan and placement. The next step will be CTS.
+
+## Clock Tree Synthesis
+The process of connecting clock pins of all sequential cells to the clock net such that clock skew is minimized is called CTS. Clock nets are set as ideal during synthesis and placement. Ideal network means there is no interconnect delys or wire delays are not taken into account. We do so because if we are not setting clock net as ideal, the interconnect delays degrade the clock signal and lead to timing violations, and worst some cells may not get the clock signal.
+
+During CTS, clock buffers and inverters are added to achieve minimal clock skew. These clock buffers are different from normal buffers. CTS buffers have equal rise and fall times.
+
+The following command is used to do CTS.
+
+-  % run_cts
+Since clock tree is built, now the clocks can be propogated. Post CTS timing analsysis can be done by writing a .db file from lef and def file. Read the .db file along with liberty file, cts netlist,propogate the clocks and get the reports.
+
+-  % read_lef /openLANE_flow/designs/picorv32a/runs/03-07_12-55/tmp/merged.lef
+- % read_def /openLANE_flow/designs/picorv32a/runs/03-07_12-55/results/cts/picorv32a.cts.def
+- % write_db pico.cts.db
+- % read pico.cts.db
+- % read_verilog /openLANE_flow/designs/picorv32a/runs/03-07_12-55/results/synthesis/picorv32a.synthesis_cts.v
+- % read_liberty $::env(LIB_SYNTH_COMPLETE) 
+- % link_design picorv32a
+- % read_sdc ...../src/my_base.sdc
+- % set_propagated_clock [all_clocks]
+- % report_checks -path_delay min_max -format full_clock_expanded -digits 4
+ 
+![cts](https://user-images.githubusercontent.com/84865915/124501658-98723880-dddf-11eb-954b-74d02c37c7e5.JPG)
 
 
 # Day 5 - Final steps for RTL2GDS
 ## Generation of Power Distribution Network
 In a normal RTL to GDSII flow the generation of power distribution network is done before the placement step, but in the OpenLANE flow generation of PDN is carried out after the Clock Tree Synthesis(CTS). This step generates all the tracks, rails required for routing power to entire chip. Generation of power distribution network is done using following command.
 - gen_pdn
-# ![d5 1](https://user-images.githubusercontent.com/84865915/124377224-923d6880-dcc8-11eb-94d0-eb6c31e4f2ab.JPG)
+
+![gen](https://user-images.githubusercontent.com/84865915/124501944-1f271580-dde0-11eb-9621-f4566e5f3c0b.JPG)
+
+ 
+ The following commands perform the synthesis to routing:
+
+1.run_synthesis 
+
+2.init_floorplan 
+
+3.place_io
+
+4.global_placement_or
+
+5.detailed_placement 
+
+6.tap_decap_or detailed_placement
+
+7.gen_pdn
+
+8.run_routing
 
 
 ## Routing using TritonRoute
@@ -276,13 +331,14 @@ OpenLANE uses TritonRoute, an open source router for modern industrial designs. 
 The following command is used for routing.
 
  - run_routing
- # day5 2
+
+![rout](https://user-images.githubusercontent.com/84865915/124501402-197d0000-dddf-11eb-808a-08bcea3e0b9a.JPG)
 
 ## SPEF File Generation
 Standard Parasitic Exchange Format (SPEF) is an IEEE standard for representing parasitic data of wires in a chip in ASCII format. Non-ideal wires have parasitic resistance and capacitance that are captured by SPEF. OpenLANE consists of a tool named, SPEF_EXTRACTOR for generation of SPEF file. It is a python based parser which takes the LEF and DEF files as input arguments and generates the SPEF file. The following command is used for invoking the SPEC_EXTRACTOR.
 
-- cd <path-to-SPEF_EXTRACTOR-tool-directory>
-- python3 main.py <path-to-LEF-file> <path-to-DEF-file-created-after-routing>
+- cd path-to-SPEF_EXTRACTOR-tool-directory
+- python3 main.py path-to-LEF-file path-to-DEF-file-created-after-routing
 
   
 # References
